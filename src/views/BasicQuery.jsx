@@ -5,7 +5,17 @@ import { usersCrud } from '../api'
 import UserTable from '../components/UserTable'
 
 function BasicQuery() {
-  const { data, error, status } = useQuery('users', () => usersCrud.list())
+  const { data, error, status } = useQuery('users', () => usersCrud.list(), {
+    placeholderData: () => [
+      {
+        id: 111,
+        first_name: 'Jack',
+        last_name: 'Timmes',
+        email: 'stimmes0@nasa.gov',
+        gender: 'Male',
+      },
+    ],
+  })
 
   return (
     <div>
