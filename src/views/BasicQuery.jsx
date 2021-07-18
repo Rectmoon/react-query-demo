@@ -1,13 +1,11 @@
 import React from 'react'
 import { useQuery } from 'react-query'
+import { usersCrud } from '../api'
 
 import UserTable from '../components/UserTable'
 
 function BasicQuery() {
-  const fetchAllUsers = async () =>
-    await (await fetch('http://localhost:3004/users')).json()
-
-  const { data, error, status } = useQuery('users', fetchAllUsers)
+  const { data, error, status } = useQuery('users', () => usersCrud.list())
 
   return (
     <div>

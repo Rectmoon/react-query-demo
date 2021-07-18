@@ -2,25 +2,17 @@ import React, { useState } from 'react'
 import { useQuery } from 'react-query'
 
 import UserTable from '../components/UserTable'
+import { usersCrud } from '../api'
 
-const pageLimit = 15
-
-const fetchUsers = async (page = 1) => {
-  const response = await fetch(
-    `http://localhost:3004/users?_page=${page}&_limit=${pageLimit}`
-  )
-  // console.log(res.headers.get('Link')) // Can be used to validate pagination buttons
-  return response.json()
-}
+const PAGE_SIZE = 20
 
 function PaginatedQuery() {
   const [page, setPage] = useState(1)
   const { data, isLoading, isError, status, error } = useQuery(
     ['paginatedUsers', page],
-    () => fetchUsers(page),
-    {
-      keepPreviousData: true,
-    }
+    () => usersCrud.list({ _page: page, _limit: PAGE_SIZE }),
+    { keepPreviousData: true }
+    // { keepPreviousData: false, cacheTime: 3 }
   )
 
   const prevPage = () => {
@@ -55,7 +47,7 @@ function PaginatedQuery() {
         <button
           className="btn btn-page"
           onClick={nextPage}
-          disabled={data && data.length < pageLimit}
+          disabled={data && data.length < PAGE_SIZE}
         >
           Next
         </button>

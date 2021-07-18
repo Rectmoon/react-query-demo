@@ -1,6 +1,5 @@
 import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
-import axios from 'axios'
 import { useMutation, useQueryClient } from 'react-query'
 
 import { AppContext } from '../store/app-context'
@@ -9,26 +8,24 @@ import EditIcon from '../icons/edit'
 import DeleteIcon from '../icons/delete'
 import DeleteModal from './DeleteModal'
 
+import { usersCrud } from '../api'
+
 import './table.css'
 
 function UserTable({ users }) {
-  // Delete Modal Show State
   const [deleteId, setDeleteId] = useState(0)
   const [showModal, setShowModal] = useState(false)
   const [flashMessage, setFlashMessage] = useContext(AppContext)
 
   const queryClient = useQueryClient()
 
-  const deleteMutation = useMutation(
-    (id) => axios.delete(`http://localhost:3004/users/${id}`),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries()
-        setFlashMessage('Delete Successful!')
-        hideModal()
-      },
-    }
-  )
+  const deleteMutation = useMutation(usersCrud.remove, {
+    onSuccess: () => {
+      queryClient.invalidateQueries()
+      setFlashMessage('Delete Successful!')
+      hideModal()
+    },
+  })
 
   const showDeleteModal = (id) => {
     setDeleteId(id)

@@ -1,17 +1,14 @@
 import React, { useContext } from 'react'
-import axios from 'axios'
 import { Redirect } from 'react-router-dom'
 import { useMutation } from 'react-query'
 
 import { AppContext } from '../store/app-context'
 import UserForm from '../components/UserForm'
-
-const postUser = async (newUser) =>
-  await (await axios.post('http://localhost:3004/users', newUser)).data
+import { usersCrud } from '../api'
 
 function CreateUser() {
-  const [flashMessage, setFlashMessage] = useContext(AppContext)
-  const mutation = useMutation((newUser) => postUser(newUser), {
+  const [, setFlashMessage] = useContext(AppContext)
+  const mutation = useMutation(usersCrud.create, {
     onSuccess: (data) => {
       setFlashMessage(
         `New User Created - Id: ${data.id} Name: ${data.first_name} ${data.last_name}`

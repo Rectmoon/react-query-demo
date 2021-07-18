@@ -1,13 +1,14 @@
 import React from 'react'
 import { useInfiniteQuery } from 'react-query'
+
 import axios from 'axios'
 
-function InfiniteQuery() {
-  const pageLimit = 5
+const PAGE_SIZE = 5
 
+function InfiniteQuery() {
   const fetchUsers = ({ pageParam = 1 }) =>
     axios.get(
-      `http://localhost:3004/users?_page=${pageParam}&_limit=${pageLimit}`
+      `http://localhost:3004/users?_page=${pageParam}&_limit=${PAGE_SIZE}`
     )
 
   const parseLinkHeader = (linkHeader) => {
@@ -19,6 +20,7 @@ function InfiniteQuery() {
       const thisHeaderUrl = header[0].slice(1, -1)
       return [thisHeaderRel, thisHeaderUrl]
     })
+
     return Object.fromEntries(linkHeadersMap)
   }
 
@@ -45,6 +47,7 @@ function InfiniteQuery() {
         return undefined
       }
     },
+    // keepPreviousData: true,
   })
 
   let userList

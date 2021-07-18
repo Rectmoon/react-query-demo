@@ -1,31 +1,26 @@
 import React from 'react'
-import axios from 'axios'
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useParams, Redirect } from 'react-router-dom'
 
 import UserForm from '../components/UserForm'
 
+import { usersCrud } from '../api'
+
 const fetchUser = async ({ queryKey }) => {
   const [_key, { id }] = queryKey
-  const response = await fetch(`http://localhost:3004/users/${id}`)
 
-  if (!response.ok) {
-    throw new Error(response.statusText)
-  }
-
-  return response.json()
+  return usersCrud.find(id)
 }
 
 function EditUser() {
   const { id } = useParams()
+  const queryClient = useQueryClient()
   const { data, error, isLoading, isError } = useQuery(
-    ['user', { id }],
+    ['users', { id }],
     fetchUser
   )
 
-  const mutation = useMutation((updatedUser) =>
-    axios.put(`http://localhost:3004/users/${id}`, updatedUser)
-  )
+  const mutation = useMutation(usersCrud.update)
 
   const { isSuccess } = mutation
 
@@ -34,6 +29,7 @@ function EditUser() {
   }
 
   if (isSuccess) {
+    queryClient.invalidateQueries('users')
     return <Redirect to="/" />
   }
 
